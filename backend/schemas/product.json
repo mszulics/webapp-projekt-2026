@@ -1,0 +1,9 @@
+{
+  "id": 666,
+  "name": "Product Name", 
+  "desc": "Egy rövidke bemutató mi lenne a termék",
+  "longdesc": "Egy hosszab leírás",
+  "price": 1500, 
+  "purchasable": 1,
+  "flags": []
+}
