@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 const ProductCard = ({ termek, onKosarba }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const flags = termek.flags || [];
-  const isSoldOut = flags.includes("SoldOut");
-  const canBuy = termek.purchasable === "True" && !isSoldOut;
+  const flags = typeof termek.flags === 'string' ? JSON.parse(termek.flags) : (termek.flags || []);
+  const isSoldOut = flags.includes("SoldOut") || termek.purchasable === 0;
+  const canBuy = termek.purchasable === 1 && !isSoldOut;
 
   return (
     <div 
