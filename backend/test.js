@@ -1,14 +1,14 @@
 import { addProduct, registerUser, loginUser, deleteUser, hasProductName } from './dbconnection.js';
 
 // Név, rövid leírás, hosszú leírás, ár, vásárolható-e (1/0), flagek
-if (!hasProductName("Gamer Egér 2026"))
+if (!hasProductName("Gamer Asztal Nagyon Jo"))
 {
     addProduct(
-        "Gamer Egér 2026", 
-        "Szupergyors és világít és még meg is vásárolható!", 
-        "Ez a legújabb modell, 25000 DPI felbontással.", 
-        20000, 
-        0, 
+        "Gamer Asztal Nagyon Jo", 
+        "Nagyon jo", 
+        "Ez a legújabb modell, erős szerkezettel", 
+        22000, 
+        1, 
         []
     );
 

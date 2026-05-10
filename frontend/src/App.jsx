@@ -12,7 +12,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Mind');
 
-  // Lekéri a termékeket a társad backendjétől (7777-es port).
+  // Lekéri a termékeket a backendtől (7777-es port).
   useEffect(() => {
     document.title = "Webshop";
 
@@ -84,12 +84,8 @@ const App = () => {
   // Kiszűri a listából azokat a termékeket, amik megfelelnek a keresésnek.
   const szurtTermekek = termekek.filter(t => {
     const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'Mind' || t.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
-
-  // Létrehoz egy listát az elérhető termékkategóriákból a szűrőgombokhoz.
-  const kategoriak = ['Mind', ...new Set(termekek.map(t => t.category || 'Egyéb'))];
 
   return (
     <Router>
@@ -134,21 +130,6 @@ const App = () => {
                         background: '#1c1c1e', color: 'white', outline: 'none', fontSize: '1.1em', marginBottom: '20px'
                       }}
                     />
-                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                      {kategoriak.map(kat => (
-                        <button 
-                          key={kat} onClick={() => setSelectedCategory(kat)}
-                          style={{
-                            padding: '10px 20px', borderRadius: '20px', border: 'none', cursor: 'pointer',
-                            background: selectedCategory === kat ? '#ffffff' : '#1c1c1e',
-                            color: selectedCategory === kat ? '#000' : '#8e8e93',
-                            fontWeight: '600', transition: '0.3s'
-                          }}
-                        >
-                          {kat}
-                        </button>
-                      ))}
-                    </div>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px' }}>
                     {szurtTermekek.map(termek => (
