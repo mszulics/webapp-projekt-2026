@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Backend for the webapp 2026 project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mszulics/webapp-projekt-2026.git"
+  },
+  "keywords": [
+    "backend",
+    "webapp",
+    "2026",
+    "zh",
+    "nye"
+  ],
+  "author": "pchMate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mszulics/webapp-projekt-2026/issues"
+  },
+  "homepage": "https://github.com/mszulics/webapp-projekt-2026#readme",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1"
+  }
+}
