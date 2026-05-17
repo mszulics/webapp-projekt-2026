@@ -3,37 +3,79 @@ import { useNavigate } from 'react-router-dom';
 
 const AuthPage = ({ onLogin }) => {
   const [isRegister, setIsRegister] = useState(false);
+  const [name, setName] = useState(''); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState(''); // Új: a felugró ablak helyett
   const navigate = useNavigate();
 
-  // Kezeli az űrlap beküldését: regisztrációkor ment, bejelentkezéskor ellenőriz.
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
 
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-
+    // --- REGISZTRÁCIÓ ---
     if (isRegister) {
-      const exists = registeredUsers.find(u => u.email === email);
-      if (exists) {
-        setError('Ez az email már foglalt!');
-        return;
+      try {
+        const response = await fetch('http://localhost:7777/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, mail: email, psw: password })
+        });
+
+        if (!response.ok) throw new Error('Szerver hiba');
+
+        const data = await response.json();
+        const kapottKod = (data && typeof data === 'object') ? data.code : data;
+
+        switch (Number(kapottKod)) {
+          case 0:
+            setSuccessMsg('Sikeres regisztráció! Most már beléphetsz.');
+            setIsRegister(false); // Átdobjuk a felhasználót a belépés fülre
+            setName('');
+            setPassword('');
+            break;
+          case 1:
+            // Már regisztrált, egyből beléptetjük csendben
+            onLogin({ email });
+            navigate('/');
+            break;
+          case 2:
+            setError('Ez az email cím már foglalt!');
+            break;
+          case 3:
+            setError('Hiányzó adatok! Kérjük, tölts ki minden mezőt.');
+            break;
+          default:
+            setError('Ismeretlen hiba történt a regisztráció során.');
+        }
+      } catch (err) {
+        setError('A szerver nem érhető el!');
       }
-      const newUser = { email, password };
-      localStorage.setItem('registeredUsers', JSON.stringify([...registeredUsers, newUser]));
-      setIsRegister(false);
-      setEmail('');
-      setPassword('');
-      alert('Sikeres regisztráció! Most már beléphetsz.');
-    } else {
-      const user = registeredUsers.find(u => u.email === email && u.password === password);
-      if (user) {
-        onLogin(user);
-        navigate('/');
-      } else {
-        setError('Hibás email vagy jelszó!');
+    } 
+    // --- BEJELENTKEZÉS ---
+    else {
+      try {
+        const response = await fetch('http://localhost:7777/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mail: email, psw: password })
+        });
+
+        if (!response.ok) throw new Error('Szerver hiba');
+
+        const data = await response.json();
+        const IsSikeres = (data && typeof data === 'object') ? data.success : data;
+
+        if (IsSikeres === true || IsSikeres === "true") {
+          onLogin({ email });
+          navigate('/');
+        } else {
+          setError('Hibás email vagy jelszó!');
+        }
+      } catch (err) {
+        setError('A szerver nem érhető el!');
       }
     }
   };
@@ -52,8 +94,21 @@ const AuthPage = ({ onLogin }) => {
         </p>
         
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {error && <div style={{ color: '#ff453a', fontSize: '0.85em', marginBottom: '10px' }}>{error}</div>}
+          {/* Hiba és Siker üzenetek diszkrét megjelenítése */}
+          {error && <div style={{ color: '#ff453a', fontSize: '0.85em', marginBottom: '5px' }}>{error}</div>}
+          {successMsg && <div style={{ color: '#32d74b', fontSize: '0.85em', marginBottom: '5px' }}>{successMsg}</div>}
           
+          {isRegister && (
+            <input 
+              type="text" placeholder="Felhasználónév" required value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={{
+                padding: '16px 20px', borderRadius: '18px', border: '1px solid #333',
+                background: '#2c2c2e', color: 'white', fontSize: '1em', outline: 'none'
+              }}
+            />
+          )}
+
           <input 
             type="email" placeholder="Email cím" required value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -84,7 +139,7 @@ const AuthPage = ({ onLogin }) => {
         <div style={{ marginTop: '25px', color: '#8e8e93', fontSize: '0.9em' }}>
           {isRegister ? 'Van már fiókod?' : 'Nincs még fiókod?'} 
           <span 
-            onClick={() => { setIsRegister(!isRegister); setError(''); }}
+            onClick={() => { setIsRegister(!isRegister); setError(''); setSuccessMsg(''); }}
             style={{ color: '#0a84ff', cursor: 'pointer', marginLeft: '5px', fontWeight: '600' }}
           >
             {isRegister ? 'Belépés' : 'Regisztráció most'}
