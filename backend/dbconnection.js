@@ -88,8 +88,11 @@ export function registerUser(name, mail, psw) {
 export function loginUser(mail, psw) {
     psw = hashPsw(psw);
     ensureExists();
-    const insert = database.prepare('SELECT id FROM users WHERE users.mail == ? AND users.psw == ?');
-    return insert.get(mail, psw) != undefined;
+    // VÁLTOZÁS: id helyett name-t kérünk le
+    const insert = database.prepare('SELECT name FROM users WHERE users.mail == ? AND users.psw == ?');
+    const user = insert.get(mail, psw);
+    // VÁLTOZÁS: Visszaadjuk a nevet, ha létezik, különben false
+    return user ? user.name : false;
 }
 
 function hasUser(mail) {

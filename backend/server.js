@@ -23,26 +23,28 @@ app.post('/api/register', (req, res) => {
   if (name == undefined || mail == undefined || psw == undefined)
   {
     // code 3 means something is not right!
-    res.send(3);
+    res.json({ code: 3 }); // VÁLTOZÁS: res.send(3) helyett res.json({ code: 3 })
     return;
   }
-  req.cookies.get
+  
+  
   const rsp = registerUser(name, mail, psw);
 
-  res.send(rsp);
+  res.json({ code: rsp }); // VÁLTOZÁS: res.send(rsp) helyett res.json({ code: rsp })
 })
 
 app.post('/api/login', (req, res) => {
   const { mail, psw } = req.body;
   if ( mail == undefined || psw == undefined)
   {
-    res.send(false);
+    res.json({ success: false }); // VÁLTOZÁS: res.send(false) helyett JSON objektum
     return;
   }
 
-  const rsp = loginUser(mail, psw);
+  const rsp = loginUser(mail, psw); // Ez most már vagy false, vagy a felhasználó neve
 
-  res.send(rsp);
+  // VÁLTOZÁS: Szintén JSON formátumban küldjük vissza, hozzácsapva a kapott nevet
+  res.json({ success: rsp !== false, name: rsp });
 })
 
 
