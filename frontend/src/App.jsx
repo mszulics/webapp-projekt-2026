@@ -5,14 +5,11 @@ import CartPage from './pages/CartPage';
 import AuthPage from './pages/AuthPage';
 
 const App = () => {
-  // A termékeket kezdetben üres listaként definiáljuk.
   const [termekek, setTermekek] = useState([]);
-  // Jelzi, hogy folyamatban van-e az adatok letöltése.
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Mind');
 
-  // Lekéri a termékeket a backendtől (7777-es port).
   useEffect(() => {
     document.title = "Webshop";
 
@@ -33,22 +30,21 @@ const App = () => {
     return mentett ? JSON.parse(mentett) : [];
   });
 
+  // Itt tároljuk a bejelentkezett felhasználót a böngésző memóriájából
   const [user, setUser] = useState(() => {
     const mentettUser = localStorage.getItem('user');
     return mentettUser ? JSON.parse(mentettUser) : null;
   });
 
-  // Elmenti a kosár aktuális állapotát a böngésző memóriájába.
   useEffect(() => {
     localStorage.setItem('kosar', JSON.stringify(kosar));
   }, [kosar]);
 
-  // Elmenti a bejelentkezett felhasználó adatait.
+  // Itt mentjük el a felhasználót a böngésző memóriájába
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));
   }, [user]);
 
-  // Beteszi a terméket a kosárba, vagy ha már ott van, növeli a darabszámot.
   const hozzaadasAKosarhoz = (termek) => {
     setKosar(prevKosar => {
       const letezik = prevKosar.find(item => item.id === termek.id);
@@ -61,7 +57,6 @@ const App = () => {
     });
   };
 
-  // Növeli vagy csökkenti egy kosárban lévő termék mennyiségét.
   const mennyisegModositasa = (id, valtozas) => {
     setKosar(prevKosar => prevKosar.map(item => {
       if (item.id === id) {
@@ -72,16 +67,12 @@ const App = () => {
     }));
   };
 
-  // Kitörli a kijelölt terméket a kosárból.
   const eltavolitasAKosarbol = (id) => setKosar(kosar.filter(item => item.id !== id));
   
-  // Üressé teszi a teljes kosarat.
   const kosarUrítése = () => setKosar([]);
   
-  // Kijelentkezteti a felhasználót és törli a mentett session-t.
   const handleLogout = () => setUser(null);
 
-  // Kiszűri a listából azokat a termékeket, amik megfelelnek a keresésnek.
   const szurtTermekek = termekek.filter(t => {
     const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
@@ -104,7 +95,10 @@ const App = () => {
               </Link>
               {user ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <span style={{ fontSize: '0.85em', color: '#8e8e93' }}>{user.email}</span>
+                  {/* Itt írjuk ki a nevet (ha van), vagy az e-mailt */}
+                  <span style={{ fontSize: '0.85em', fontWeight: 'bold', color: 'white' }}>
+                    {user.name || user.email}
+                  </span>
                   <button onClick={handleLogout} style={{ background: '#3a3a3c', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '20px', cursor: 'pointer', fontSize: '0.8em' }}>Kilépés</button>
                 </div>
               ) : (

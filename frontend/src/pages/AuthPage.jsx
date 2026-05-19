@@ -7,7 +7,7 @@ const AuthPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [successMsg, setSuccessMsg] = useState(''); // Új: a felugró ablak helyett
+  const [successMsg, setSuccessMsg] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -32,13 +32,12 @@ const AuthPage = ({ onLogin }) => {
         switch (Number(kapottKod)) {
           case 0:
             setSuccessMsg('Sikeres regisztráció! Most már beléphetsz.');
-            setIsRegister(false); // Átdobjuk a felhasználót a belépés fülre
+            setIsRegister(false); 
             setName('');
             setPassword('');
             break;
           case 1:
-            // Már regisztrált, egyből beléptetjük csendben
-            onLogin({ email });
+            onLogin({ email, name }); // Az 1-es esetnél automatikusan be is engedjük
             navigate('/');
             break;
           case 2:
@@ -69,7 +68,7 @@ const AuthPage = ({ onLogin }) => {
         const IsSikeres = (data && typeof data === 'object') ? data.success : data;
 
         if (IsSikeres === true || IsSikeres === "true") {
-          onLogin({ email });
+          onLogin({ email, name: data.name }); // Átadjuk a nevet is a frontend memóriájának
           navigate('/');
         } else {
           setError('Hibás email vagy jelszó!');
@@ -94,7 +93,6 @@ const AuthPage = ({ onLogin }) => {
         </p>
         
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {/* Hiba és Siker üzenetek diszkrét megjelenítése */}
           {error && <div style={{ color: '#ff453a', fontSize: '0.85em', marginBottom: '5px' }}>{error}</div>}
           {successMsg && <div style={{ color: '#32d74b', fontSize: '0.85em', marginBottom: '5px' }}>{successMsg}</div>}
           
